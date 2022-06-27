@@ -5,12 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Divider } from "react-native-elements";
 import Validator from "email-validator";
+import { firebase, db } from "../../firebase.js";
 
 const SignupForm = ({ navigation }) => {
   const SignupFormSchema = Yup.object().shape({
@@ -20,11 +21,38 @@ const SignupForm = ({ navigation }) => {
       .required()
       .min(8, "Your password must have at least 8 characters"),
   });
+
+  const getRandomProfilePicture = async () => {
+    const response = await fetch("https://xsgames.co/randomusers/");
+    const data = await response.json();
+    console.log(data.results[0].picture.large);
+    return data.results[0].picture.large;
+  };
+  getRandomProfilePicture();
+  const onSignUp = async (email, password, username) => {
+    try {
+      const authUser = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password);
+      console.log("🔥Firebase User Created Successful 👍", authUser);
+      db.collection("users").add({
+        owner_uid: authUser.user.uid,
+        username: username,
+        email: authUser.user.email,
+        profile_picture: await getRandomProfilePicture(),
+      });
+      navigation.push("HomeScreen");
+    } catch (error) {
+      Alert.alert("🔥Error", error.message);
+    }
+  };
   return (
     <View style={styles.wrapper}>
       <Formik
         initialValues={{ email: "", username: "", password: "" }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) =>
+          onSignUp(values.email, values.password, values.username)
+        }
         validationSchema={SignupFormSchema}
         validateOnMount={true}
       >
