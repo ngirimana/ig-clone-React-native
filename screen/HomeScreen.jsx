@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   Text,
@@ -15,9 +15,10 @@ import { bottomTabIcons } from "../components/home/BottomTabs";
 import { db } from "../firebase";
 
 const HomeScreen = ({ navigation }) => {
+  const [posts, setPosts] = useState([]);
   useEffect(() => {
     db.collectionGroup("posts").onSnapshot((snapshot) => {
-      console.log(snapshot.docs.map((doc) => doc.data()));
+      setPosts(snapshot.docs.map((doc) => doc.data()));
     });
   }, []);
   return (
@@ -25,7 +26,7 @@ const HomeScreen = ({ navigation }) => {
       <Header navigation={navigation} />
       <Stories />
       <ScrollView>
-        {POSTS.map((post, index) => (
+        {posts.map((post, index) => (
           <Post key={index} post={post} />
         ))}
       </ScrollView>
