@@ -23,9 +23,8 @@ const SignupForm = ({ navigation }) => {
   });
 
   const getRandomProfilePicture = async () => {
-    const response = await fetch("https://xsgames.co/randomusers/");
+    const response = await fetch("https://randomuser.me/api/");
     const data = await response.json();
-    console.log(data.results[0].picture.large);
     return data.results[0].picture.large;
   };
   getRandomProfilePicture();
@@ -34,7 +33,7 @@ const SignupForm = ({ navigation }) => {
       const authUser = await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password);
-      console.log("🔥Firebase User Created Successful 👍", authUser);
+      console.log("🔥Firebase User Created Successful 👍");
       db.collection("users").add({
         owner_uid: authUser.user.uid,
         username: username,
