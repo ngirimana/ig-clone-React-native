@@ -28,7 +28,7 @@
       "package": "com.safari1006.igclone"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png"
     }
   }
 }
